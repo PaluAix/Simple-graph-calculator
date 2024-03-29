@@ -32,12 +32,12 @@ def find_max_edge_path(graph):
 
 def find_shortest_path(graph, start='A', end='B'):
     distances = dijkstra(graph, start)
-    path_distance = distances.get(end, "这两点的最短路不存在")
-    return f"从 {start} 到 {end} 的最短路径长度是: {path_distance}"
+    path_distance = distances.get(end, "这两点好像还没有修路哦")
+    return f"从 {start} 到 {end} 最短只需要走 {path_distance} 步"
 
 def find_longest_path(graph):
     edge, weight = find_max_edge_path(graph)
     if edge:
-        return f"边权最大的边是从 {edge[0]} 到 {edge[1]}，权重为: {weight}"
+        return f"从 {edge[0]} 到 {edge[1]} 景点最多，竟然有 {weight} 个！"
     else:
-        return "没有找到最大权重的边"
+        return "景点太少啦，没什么玩头"

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>基础图论计算机</title>
+    <title>旅游攻略规划器</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
@@ -40,6 +40,22 @@
         .alert.show {
             opacity: 1;
         }
+
+        @media (min-width: 992px) {
+            .container {
+                max-width: 1200px;
+            }
+        }
+
+        .card {
+            margin: 20px;
+            font-size: 1rem;
+        }
+
+
+        .card-body p {
+            font-size: 1rem;
+        }
     </style>
 </head>
 
@@ -49,8 +65,10 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-body">
-                        <h2 class="card-title text-center">上传CSV文件</h2>
-                        <p class="text-center">通过上传CSV文件，你可以使用本网页计算有向图的最短路径或边权最大路径。请确保你的CSV文件格式为：每行一个记录，包含起点、终点和边权值，以空格分隔。</p>
+                        <h2 class="card-title text-center">上传你的地图</h2>
+                        <p class="text-center">把地图给我，我会帮你出谋划策！</p>
+                        <p class="text-center"> 我可以告诉你两个休息点最短只需要走多远；我也可以给出游玩这张地图时景点最多的一种方案</p>
+                        <p class="text-center"> 你的地图应该是CSV格式！每行一个记录，包含休息点、它的终点和途中的景点数量，以空格分隔</p>
                         <div class="custom-file my-4">
                             <input type="file" class="custom-file-input" id="csvFileInput" accept=".csv">
                             <label class="custom-file-label" for="csvFileInput">选择文件</label>
@@ -58,9 +76,13 @@
                         <div class="text-center">
                             <button onclick="uploadFile()" class="btn btn-primary">上传文件</button>
                         </div>
-                        <div id="buttons" class="text-center mt-4" style="display:none;"><div class="form-group"><input type="text" class="form-control" id="startNode" placeholder="起点"></div><div class="form-group"><input type="text" class="form-control" id="endNode" placeholder="终点"></div>
-                            <button onclick="calculate('shortest')" class="btn btn-success">求出最短路</button>
-                            <button onclick="calculate('longest')" class="btn btn-warning">求出边权最大路</button>
+                        <div id="buttons" class="text-center mt-4" style="display:none;">
+                            <div class="form-group"><input type="text" class="form-control" id="startNode"
+                                    placeholder="起点"></div>
+                            <div class="form-group"><input type="text" class="form-control" id="endNode"
+                                    placeholder="终点"></div>
+                            <button onclick="calculate('shortest')" class="btn btn-success">告诉我最短要走多远</button>
+                            <button onclick="calculate('longest')" class="btn btn-warning">告诉我景点最多的地方在哪里</button>
                         </div>
                     </div>
                 </div>
@@ -104,34 +126,34 @@
             }
         }
 
-        
-function calculate(pathType) {
-    const startNode = document.getElementById('startNode').value;
-    const endNode = document.getElementById('endNode').value;
 
-    fetch(`/${pathType}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ start: startNode, end: endNode }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        showAlert(`结果: ${data.result}`, 'success');
-    })
-    .catch(error => console.error('Error:', error));
-}
+        function calculate(pathType) {
+            const startNode = document.getElementById('startNode').value;
+            const endNode = document.getElementById('endNode').value;
 
-function showAlert(message, type) {
-    const resultDiv = document.getElementById('result');
-    resultDiv.innerHTML = message;
-    resultDiv.className = `alert alert-${type} show`;
-    resultDiv.style.display = 'block';
-    setTimeout(() => { resultDiv.style.display = 'none'; }, 5000);
-}
+            fetch(`/${pathType}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ start: startNode, end: endNode }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    showAlert(`结果: ${data.result}`, 'success');
+                })
+                .catch(error => console.error('Error:', error));
+        }
 
-</script>
+        function showAlert(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = message;
+            resultDiv.className = `alert alert-${type} show`;
+            resultDiv.style.display = 'block';
+            setTimeout(() => { resultDiv.style.display = 'none'; }, 5000);
+        }
+
+    </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
