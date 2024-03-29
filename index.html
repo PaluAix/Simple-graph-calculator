@@ -58,7 +58,7 @@
                         <div class="text-center">
                             <button onclick="uploadFile()" class="btn btn-primary">上传文件</button>
                         </div>
-                        <div id="buttons" class="text-center mt-4" style="display:none;">
+                        <div id="buttons" class="text-center mt-4" style="display:none;"><div class="form-group"><input type="text" class="form-control" id="startNode" placeholder="起点"></div><div class="form-group"><input type="text" class="form-control" id="endNode" placeholder="终点"></div>
                             <button onclick="calculate('shortest')" class="btn btn-success">求出最短路</button>
                             <button onclick="calculate('longest')" class="btn btn-warning">求出边权最大路</button>
                         </div>
@@ -104,23 +104,34 @@
             }
         }
 
-        function calculate(pathType) {
-            fetch(`/${pathType}`)
-                .then(response => response.json())
-                .then(data => {
-                    showAlert(`结果: ${data.result}`, 'success');
-                })
-                .catch(error => console.error('Error:', error));
-        }
+        
+function calculate(pathType) {
+    const startNode = document.getElementById('startNode').value;
+    const endNode = document.getElementById('endNode').value;
 
-        function showAlert(message, type) {
-            const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = message;
-            resultDiv.className = `alert alert-${type} show`;
-            resultDiv.style.display = 'block';
-            setTimeout(() => resultDiv.className = 'alert', 5000); 
-        }
-    </script>
+    fetch(`/${pathType}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ start: startNode, end: endNode }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        showAlert(`结果: ${data.result}`, 'success');
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function showAlert(message, type) {
+    const resultDiv = document.getElementById('result');
+    resultDiv.innerHTML = message;
+    resultDiv.className = `alert alert-${type} show`;
+    resultDiv.style.display = 'block';
+    setTimeout(() => { resultDiv.style.display = 'none'; }, 5000);
+}
+
+</script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

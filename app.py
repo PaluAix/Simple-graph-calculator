@@ -32,21 +32,28 @@ def upload_file():
         return jsonify({'error': True, 'message': '上传失败，请重试。'}), 400
 
 # 这里加个误操作告警，防呆
-@app.route('/shortest', methods=['GET'])
+@app.route('/shortest', methods=['POST'])
 def shortest_path():
-    start = request.args.get('start', 'A')
-    end = request.args.get('end', 'B')
+    data = request.json
+    start = data.get('start')
+    end = data.get('end')
     if not graph:
         return jsonify({'error': '图数据为空，请先上传文件。'})
     result = find_shortest_path(graph, start, end)
     return jsonify({'result': result})
 
-@app.route('/longest', methods=['GET'])
+
+@app.route('/longest', methods=['POST'])
 def longest_path():
     if not graph:
-        return jsonify({'error': '图数据为空，请先上传文件。'})
+        return jsonify({'error': 'No graph data available. Please upload a file.'}), 400
+    start = request.json.get('start')
+    end = request.json.get('end')
+    # Assuming the logic for 'find_longest_path' doesn't require start and end
+    # But if it does, it would be called here with those parameters
     result = find_longest_path(graph)
     return jsonify({'result': result})
+
 
 def process_csv(file):
     graph = {}
@@ -73,3 +80,5 @@ def process_csv(file):
 if __name__ == '__main__':
     # 这里一定要指定host='0.0.0.0'，否则不会监听此端口
     app.run(host='0.0.0.0',port=8888,debug=True)
+
+

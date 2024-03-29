@@ -32,7 +32,7 @@ def find_max_edge_path(graph):
 
 def find_shortest_path(graph, start='A', end='B'):
     distances = dijkstra(graph, start)
-    path_distance = distances.get(end, "No path found")
+    path_distance = distances.get(end, "这两点的最短路不存在")
     return f"从 {start} 到 {end} 的最短路径长度是: {path_distance}"
 
 def find_longest_path(graph):
