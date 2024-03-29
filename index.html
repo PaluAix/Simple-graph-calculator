@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基础图论计算机</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f0f2f5;
+            padding-top: 40px;
+        }
+
+        .card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn {
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .custom-file-input {
+            cursor: pointer;
+        }
+
+        .alert {
+            transition: all 0.4s ease-in-out;
+            opacity: 0;
+            margin-top: 20px;
+        }
+
+        .alert.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title text-center">上传CSV文件</h2>
+                        <div class="custom-file my-4">
+                            <input type="file" class="custom-file-input" id="csvFileInput" accept=".csv">
+                            <label class="custom-file-label" for="csvFileInput">选择文件</label>
+                        </div>
+                        <div class="text-center">
+                            <button onclick="uploadFile()" class="btn btn-primary">上传文件</button>
+                        </div>
+                        <div id="buttons" class="text-center mt-4" style="display:none;">
+                            <button onclick="calculate('shortest')" class="btn btn-success">求出最短路</button>
+                            <button onclick="calculate('longest')" class="btn btn-warning">求出边权最大路</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="result" class="alert" role="alert" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.querySelector('.custom-file-input').addEventListener('change', function (e) {
+            var fileName = document.getElementById("csvFileInput").files[0].name;
+            var nextSibling = e.target.nextElementSibling
+            nextSibling.innerText = fileName
+        });
+
+        function uploadFile() {
+            const input = document.getElementById('csvFileInput');
+            if (input.files.length > 0) {
+                const formData = new FormData();
+                formData.append('file', input.files[0]);
+                fetch('/upload', {
+                    method: 'POST',
+                    body: formData,
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            showAlert(data.message, 'danger');  // 显示错误消息
+                            document.getElementById('buttons').style.display = 'none'; // 不显示按钮
+                        } else {
+                            showAlert(data.message, 'info');  // 显示成功消息
+                            document.getElementById('buttons').style.display = 'block';
+                        }
+                    })
+                    /*  .then(data => {
+                         showAlert(data.message, 'info');
+                         document.getElementById('buttons').style.display = 'block';
+                     }) */
+                    .catch(error => console.error('Error:', error));
+            } else {
+                showAlert('请选择文件', 'danger');
+            }
+        }
+
+        function calculate(pathType) {
+            fetch(`/${pathType}`)
+                .then(response => response.json())
+                .then(data => {
+                    showAlert(`结果: ${data.result}`, 'success');
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function showAlert(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = message;
+            resultDiv.className = `alert alert-${type} show`;
+            resultDiv.style.display = 'block';
+            setTimeout(() => resultDiv.className = 'alert', 5000); 
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
