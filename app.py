@@ -49,8 +49,6 @@ def longest_path():
         return jsonify({'error': 'No graph data available. Please upload a file.'}), 400
     start = request.json.get('start')
     end = request.json.get('end')
-    # Assuming the logic for 'find_longest_path' doesn't require start and end
-    # But if it does, it would be called here with those parameters
     result = find_longest_path(graph)
     return jsonify({'result': result})
 
